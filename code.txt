@@ -1,0 +1,148 @@
+let classifier;
+
+const options = { probabilityThreshold: 0.7 };
+
+let label;
+let confidence;
+let which = false;
+let pawn;
+let rook;
+let bishop;
+let knight;
+let queen;
+let king;
+let xPos;
+let yPos;
+let sizeWidth;
+let sizeHeight;
+let boardLocX;
+let boardLocY;
+let currentPiece;
+let sfx;
+
+function preload() {
+  classifier = ml5.soundClassifier("SpeechCommands18w", options);
+  pawn = loadImage("pawn.png");
+  rook = loadImage("rook.png");
+  bishop = loadImage("bishop.png");
+  knight = loadImage("knight.png");
+  queen = loadImage("queen.png");
+  king = loadImage("king.png");
+  sfx = loadSound("piece.mp3");
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(150);
+  sizeWidth = windowWidth / 12;
+  sizeHeight = windowHeight / 12;
+  xPos = 25;
+  yPos = 30;
+  boardLocX = 0;
+  boardLocY = 0;
+  currentPiece = 1;
+  setUpBoard(currentPiece);
+  // Classify the sound from microphone in real time
+  classifier.classify(gotResult);
+}
+
+// A function to run when we get any errors and the results
+function gotResult(error, results) {
+  // Display error in the console
+  if (error) {
+    console.error(error);
+  }
+  // Show the first label and confidence
+  //console.log('Label: ' + results[0].label);
+  processInput(results[0].label);
+}
+
+function processInput(input) {
+  if (input == "one") {
+    currentPiece = 1;
+    sfx.play();
+    setUpBoard(currentPiece);
+  } else if (input == "two") {
+    currentPiece = 2;
+    sfx.play();
+    setUpBoard(currentPiece);
+  } else if (input == "three") {
+    currentPiece = 3;
+    sfx.play();
+    setUpBoard(currentPiece);
+  } else if (input == "four") {
+    currentPiece = 4;
+    sfx.play();
+    setUpBoard(currentPiece);
+  } else if (input == "five") {
+    currentPiece = 5;
+    sfx.play();
+    setUpBoard(currentPiece);
+  } else if (input == "six") {
+    currentPiece = 6;
+    sfx.play();
+    setUpBoard(currentPiece);
+  }
+
+  if (input == "up") {
+    if (boardLocY > 0) {
+      boardLocY--;
+      yPos -= windowWidth / 10;
+      setUpBoard(currentPiece);
+    }
+    sfx.play();
+  } else if (input == "down") {
+    if (boardLocY < 7) {
+      boardLocY++;
+      yPos += windowWidth / 10;
+      setUpBoard(currentPiece);
+    }
+    sfx.play();
+  } else if (input == "left") {
+    if (boardLocX > 0) {
+      boardLocX--;
+      xPos -= windowWidth / 10;
+      setUpBoard(currentPiece);
+    }
+    sfx.play();
+  } else if (input == "right") {
+    if (boardLocX < 7) {
+      boardLocX++;
+      xPos += windowWidth / 10;
+      setUpBoard(currentPiece);
+    }
+    sfx.play();
+  }
+}
+
+function setUpBoard(whichPiece) {
+  for (let i = 0; i < 8; i++) {
+    which = !which;
+    for (let j = 0; j < 8; j++) {
+      if (which) {
+        fill(245, 230, 191, 255);
+      } else {
+        fill(102, 68, 58, 255);
+      }
+      which = !which;
+      square(
+        20 + (i * windowWidth) / 10,
+        20 + (j * windowWidth) / 10,
+        windowWidth / 10
+      );
+    }
+  }
+  if (whichPiece == 1) {
+    image(pawn, xPos, yPos, windowWidth / 12, windowHeight / 12);
+  } else if (whichPiece == 2) {
+    image(rook, xPos, yPos, windowWidth / 12, windowHeight / 12);
+  } else if (whichPiece == 3) {
+    image(bishop, xPos, yPos, windowWidth / 12, windowHeight / 12);
+  } else if (whichPiece == 4) {
+    image(knight, xPos, yPos, windowWidth / 12, windowHeight / 12);
+  } else if (whichPiece == 5) {
+    image(queen, xPos, yPos, windowWidth / 12, windowHeight / 12);
+  } else if (whichPiece == 6) {
+    image(king, xPos, yPos, windowWidth / 12, windowHeight / 12);
+  }
+}
